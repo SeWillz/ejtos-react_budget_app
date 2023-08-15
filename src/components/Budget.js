@@ -9,27 +9,28 @@ const Budget = () => {
     }, 0);
 
     const remainingBudget = budget - totalExpenses;
-    const upperLimit = 20000;
+    const upperLimit = 20000; // Set the upper limit to £20,000
 
     const [inputBudget, setInputBudget] = useState(budget);
     const [errorMessage, setErrorMessage] = useState('');
 
     const handleBudgetChange = (event) => {
         const newBudget = parseFloat(event.target.value);
-        if (!isNaN(newBudget) && newBudget <= remainingBudget && newBudget <= upperLimit) {
+        
+        if (!isNaN(newBudget) && newBudget <= upperLimit) {
             setInputBudget(newBudget);
             setErrorMessage('');
-        } else if (newBudget > upperLimit) {
-            const shouldUpdate = window.confirm(
-                `The budget you entered exceeds the upper limit of £${upperLimit}. Do you want to proceed?`
-            );
 
-            if (shouldUpdate) {
-                setInputBudget(newBudget);
-                setErrorMessage('');
-                setBudget(newBudget); // Update the actual budget value
-            } else {
-                setInputBudget(budget);
+            if (newBudget >= remainingBudget) {
+                const shouldUpdate = window.confirm(
+                    `The budget you entered exceeds the remaining budget. Do you want to proceed?`
+                );
+    
+                if (shouldUpdate) {
+                    setBudget(newBudget); // Update the actual budget value
+                } else {
+                    setInputBudget(budget);
+                }
             }
         } else {
             setInputBudget(newBudget);
@@ -46,7 +47,7 @@ const Budget = () => {
                 onChange={handleBudgetChange}
                 step='10'
                 min='0'
-                max={upperLimit}
+                max={upperLimit} // Set the max attribute to the upper limit
                 className={`budget-input ${errorMessage && 'error'}`}
             />
             {errorMessage && <p className='error-message'>{errorMessage}</p>}
